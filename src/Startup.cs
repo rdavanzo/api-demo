@@ -44,7 +44,8 @@ namespace ApiDemo
                 app.UseDeveloperExceptionPage();
             }
             
-            seedTheDatabase(context);
+            //seedTheDatabase(context);
+            DbInitializer.Initialize(context);
 
             app.UseJsonApi();
         }
