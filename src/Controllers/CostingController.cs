@@ -24,17 +24,19 @@ namespace ApiDemo.Controllers
         {
             System.Console.WriteLine("Getting cost...");
 
-            var movementItemAggregates = _dbContext
-                .MovementItemAggregates
-                .OrderBy(m => m.Date);
-
+            var movementItemAggregates = 
+                from a in _dbContext.MovementItemAggregates
+                orderby a.Date
+                select a;
+            
             foreach (var aggregate in movementItemAggregates)
             {
-                var invoiceItems = _dbContext.Invoices
-                    .Include(i => i.InvoiceItems)
-                    .OrderBy(i => i.Date)
-                    .SelectMany(i => i.InvoiceItems)
-                    .Where(i => i.Upc == aggregate.Upc);
+                var invoiceItems = 
+                    from i in _dbContext.Invoices.Include(i => i.InvoiceItems)
+                    from ii in i.InvoiceItems
+                    where ii.Upc == aggregate.Upc
+                    orderby i.Date
+                    select ii;
 
                 var quantity = aggregate.Quantity;
                 var aggregateCost = 0m;
